@@ -114,6 +114,22 @@
   .tool p.conf{margin:0;font-size:12.5px;color:var(--text-dim);font-weight:400;}
   .tool-note{margin:16px 0 0;font-size:13px;color:var(--text-dim);}
 
+  .live-tool{padding:14px 0 26px;}
+  .live-tool h3{font-size:17px;margin:0 0 4px;}
+  .live-tool .lead{margin:0 0 16px;}
+  .file-btn{
+    display:block;text-align:center;background:var(--bg);color:var(--text);
+    font-weight:700;font-size:15px;border:1.5px solid var(--green);border-radius:12px;
+    padding:14px;box-shadow:var(--glow-sm);cursor:pointer;margin-bottom:6px;
+  }
+  .file-btn input{display:none;}
+  .file-name{margin:0 0 16px;font-size:12.5px;color:var(--text-dim);text-align:center;word-break:break-all;}
+  .tool-err{display:none;margin:12px 0 0;font-size:13px;color:var(--danger);text-align:center;}
+  .tool-out{display:none;margin-top:20px;}
+  .tool-out .t{font-size:17px;font-weight:700;margin:0 0 6px;}
+  .tool-out p{margin:0 0 6px;font-size:13.5px;color:var(--text-dim);}
+  .tool-out p.small{font-size:12px;word-break:break-all;}
+
   .wl-card p{color:var(--text-dim);font-size:14px;margin:0 0 16px;}
   .copy-row{display:flex;align-items:center;gap:12px;justify-content:space-between;font-size:15px;}
   .copy-row button{
@@ -295,13 +311,51 @@
     <a class="btn-main" href="#test" style="margin-top:14px;">Haz el test de riesgo gratis</a>
   </section>
 
+  <section id="herramientas">
+    <span class="pill">HERRAMIENTAS GRATIS</span>
+    <h2>Revisa tus archivos</h2>
+    <p class="lead">Versiones básicas que funcionan en tu teléfono. Tus archivos no se suben a ningún sitio: se revisan aquí mismo.</p>
+
+    <div class="live-tool">
+      <h3>Revisar una foto</h3>
+      <p class="lead">Sube una foto y buscamos señales en sus datos ocultos.</p>
+      <label class="file-btn">Elegir una foto<input type="file" id="phF" accept="image/*"></label>
+      <p class="file-name" id="phName">Ninguna foto elegida</p>
+      <button class="btn-main" id="phGo" type="button">Revisar foto</button>
+      <p class="tool-err" id="phErr"></p>
+      <div class="tool-out" id="phOut">
+        <div class="t" id="phTitle"></div>
+        <div id="phList"></div>
+        <p class="small" style="font-size:12.5px;">Esta revisión básica solo mira los datos ocultos de la foto. Muchas apps, como WhatsApp, los borran al enviarla. Que no haya señales no prueba que la foto sea real.</p>
+      </div>
+    </div>
+
+    <div class="live-tool">
+      <h3>Comparar dos archivos</h3>
+      <p class="lead">Elige el original y la copia que te llegó, y te decimos si son idénticos.</p>
+      <label class="file-btn">Elegir el original<input type="file" id="cmpA"></label>
+      <p class="file-name" id="cmpAName">Ningún archivo elegido</p>
+      <label class="file-btn">Elegir la copia<input type="file" id="cmpB"></label>
+      <p class="file-name" id="cmpBName">Ningún archivo elegido</p>
+      <button class="btn-main" id="cmpGo" type="button">Comparar</button>
+      <p class="tool-err" id="cmpErr"></p>
+      <div class="tool-out" id="cmpOut">
+        <div class="t" id="cmpTitle"></div>
+        <p id="cmpDesc"></p>
+        <p class="small" id="cmpHash"></p>
+      </div>
+      <canvas id="cmpC1" width="128" height="128" style="display:none;"></canvas>
+      <canvas id="cmpC2" width="128" height="128" style="display:none;"></canvas>
+    </div>
+  </section>
+
   <section>
     <span class="pill">PRÓXIMAMENTE</span>
     <h2>El laboratorio de autenticidad</h2>
     <p class="lead">Estamos construyendo herramientas para saber si una foto, un video o un archivo es real. Así se verán los resultados.</p>
     <div class="tool">
-      <h4>Detector de fotos</h4>
-      <p>Sube una foto y te decimos si tiene señales de edición o de IA.</p>
+      <h4>Detector de fotos con IA</h4>
+      <p>Sube una foto y te decimos si tiene señales de edición o de haber sido creada con IA.</p>
       <p class="res-warn">Ejemplo: Señales de manipulación detectadas</p>
       <p class="conf">Nivel de confianza: alto</p>
     </div>
@@ -315,11 +369,6 @@
       <h4>Certificado de original</h4>
       <p>Registra tu foto o video con fecha y hora. Después puedes demostrar que no se ha modificado.</p>
       <p class="res-ok">Ejemplo: Archivo sin cambios desde el 18 nov 2026</p>
-    </div>
-    <div class="tool">
-      <h4>Comparador de versiones</h4>
-      <p>Compara el original con una copia que te llegó y te señalamos qué cambió.</p>
-      <p class="res-warn">Ejemplo: 3 diferencias encontradas</p>
     </div>
     <p class="tool-note">Nuestros resultados son estimaciones con un nivel de confianza, nunca una certeza absoluta.</p>
   </section>
@@ -551,6 +600,132 @@
   });
 
   updateBadge();
+})();
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/exifr/dist/full.umd.js"></script>
+<script>
+(function(){
+  function $(id){ return document.getElementById(id); }
+
+  /* ---------- Revisar una foto ---------- */
+  var photo = null;
+  $('phF').addEventListener('change', function(e){
+    photo = e.target.files[0] || null;
+    $('phName').textContent = photo ? photo.name : 'Ninguna foto elegida';
+  });
+
+  function addRow(parent, txt, color){
+    var p = document.createElement('p');
+    p.style.color = color;
+    p.textContent = txt;
+    parent.appendChild(p);
+  }
+
+  $('phGo').addEventListener('click', async function(){
+    var err = $('phErr'), out = $('phOut'), list = $('phList'), title = $('phTitle');
+    err.style.display = 'none'; out.style.display = 'none'; list.innerHTML = '';
+    if (!photo){ err.textContent = 'Elige una foto primero.'; err.style.display = 'block'; return; }
+    if (typeof exifr === 'undefined'){ err.textContent = 'No se pudo cargar la revisión. Revisa tu conexión e inténtalo de nuevo.'; err.style.display = 'block'; return; }
+    var d = null;
+    try{ d = await exifr.parse(photo, true); }catch(e){ d = null; }
+    d = d || {};
+    var sw = ((d.Software || '') + ' ' + (d.ProcessingSoftware || '') + ' ' + (d.CreatorTool || '')).trim();
+    var re = /photoshop|lightroom|gimp|snapseed|canva|picsart|facetune|midjourney|dall|stable|firefly|openai|affinity|pixelmator/i;
+    var flagged = re.test(sw);
+    if (flagged){
+      title.style.color = 'var(--warn)';
+      title.textContent = 'Señales de manipulación detectadas';
+      addRow(list, 'Se encontró un programa de edición o de IA en los datos: ' + sw + '.', 'var(--warn)');
+    } else {
+      title.style.color = 'var(--text)';
+      title.textContent = 'No encontramos señales en los datos ocultos';
+      addRow(list, 'Con esta revisión básica todavía no podemos confirmar si la foto es real.', 'var(--text-dim)');
+    }
+    var cam = ((d.Make || '') + ' ' + (d.Model || '')).trim();
+    if (cam){ addRow(list, 'Datos de cámara: ' + cam + '.', 'var(--text-dim)'); }
+    else { addRow(list, 'No hay datos de cámara. Es común si la foto pasó por WhatsApp o es una captura.', 'var(--text-dim)'); }
+    var dt = d.DateTimeOriginal || d.CreateDate;
+    if (dt){ addRow(list, 'Fecha de la foto: ' + (dt instanceof Date ? dt.toLocaleDateString('es-ES') : dt) + '.', 'var(--text-dim)'); }
+    else { addRow(list, 'No hay fecha de captura guardada.', 'var(--text-dim)'); }
+    out.style.display = 'block';
+  });
+
+  /* ---------- Comparar dos archivos ---------- */
+  var fileA = null, fileB = null;
+  $('cmpA').addEventListener('change', function(e){
+    fileA = e.target.files[0] || null;
+    $('cmpAName').textContent = fileA ? fileA.name : 'Ningún archivo elegido';
+  });
+  $('cmpB').addEventListener('change', function(e){
+    fileB = e.target.files[0] || null;
+    $('cmpBName').textContent = fileB ? fileB.name : 'Ningún archivo elegido';
+  });
+
+  function toHex(buf){
+    return Array.from(new Uint8Array(buf)).map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
+  }
+  async function sha(f){
+    var b = await f.arrayBuffer();
+    var h = await crypto.subtle.digest('SHA-256', b);
+    return toHex(h);
+  }
+  function loadImg(f){
+    return new Promise(function(res, rej){
+      var u = URL.createObjectURL(f);
+      var i = new Image();
+      i.onload = function(){ res(i); };
+      i.onerror = function(){ rej(); };
+      i.src = u;
+    });
+  }
+  async function visualDiff(f1, f2){
+    var i1 = await loadImg(f1), i2 = await loadImg(f2);
+    var c1 = $('cmpC1'), c2 = $('cmpC2');
+    var x1 = c1.getContext('2d'), x2 = c2.getContext('2d');
+    x1.drawImage(i1, 0, 0, 128, 128);
+    x2.drawImage(i2, 0, 0, 128, 128);
+    var d1 = x1.getImageData(0, 0, 128, 128).data;
+    var d2 = x2.getImageData(0, 0, 128, 128).data;
+    var n = 0, tot = 128 * 128;
+    for (var p = 0; p < d1.length; p += 4){
+      var s = Math.abs(d1[p]-d2[p]) + Math.abs(d1[p+1]-d2[p+1]) + Math.abs(d1[p+2]-d2[p+2]);
+      if (s > 60) n++;
+    }
+    return Math.round((n / tot) * 1000) / 10;
+  }
+
+  $('cmpGo').addEventListener('click', async function(){
+    var err = $('cmpErr'), out = $('cmpOut');
+    err.style.display = 'none'; out.style.display = 'none';
+    if (!fileA || !fileB){ err.textContent = 'Elige los dos archivos primero.'; err.style.display = 'block'; return; }
+    var ha, hb;
+    try{
+      ha = await sha(fileA); hb = await sha(fileB);
+    }catch(e){
+      err.textContent = 'No se pudo leer uno de los archivos. Inténtalo de nuevo.'; err.style.display = 'block'; return;
+    }
+    var t = $('cmpTitle'), d = $('cmpDesc');
+    if (ha === hb){
+      t.style.color = 'var(--ok)';
+      t.textContent = 'Los archivos son idénticos';
+      d.textContent = 'Tienen exactamente el mismo contenido, byte a byte.';
+    } else {
+      t.style.color = 'var(--warn)';
+      t.textContent = 'Los archivos son diferentes';
+      var msg = 'No tienen el mismo contenido.';
+      if (fileA.type.indexOf('image/') === 0 && fileB.type.indexOf('image/') === 0){
+        try{
+          var pct = await visualDiff(fileA, fileB);
+          if (pct < 1){ msg = 'A simple vista se ven iguales, pero el archivo cambió. Pasa al enviarlo por WhatsApp o al recomprimirlo.'; }
+          else { msg = 'Hay diferencias visibles: aproximadamente el ' + pct + '% de la imagen es distinto.'; }
+        }catch(e){}
+      }
+      d.textContent = msg;
+    }
+    $('cmpHash').textContent = 'Huella del original: ' + ha.slice(0,16) + '… · de la copia: ' + hb.slice(0,16) + '…';
+    out.style.display = 'block';
+  });
 })();
 </script>
 </body>
