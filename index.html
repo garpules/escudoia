@@ -106,6 +106,14 @@
   .scam p{margin:0 0 6px;font-size:13.5px;color:var(--text-dim);}
   .scam p.do{margin:0;color:var(--green);}
 
+  .tool{padding:12px 0;}
+  .tool h4{margin:0 0 4px;font-size:15px;}
+  .tool p{margin:0 0 8px;font-size:13.5px;color:var(--text-dim);}
+  .tool p.res-warn{margin:0;color:var(--warn);font-weight:700;}
+  .tool p.res-ok{margin:0;color:var(--ok);font-weight:700;}
+  .tool p.conf{margin:0;font-size:12.5px;color:var(--text-dim);font-weight:400;}
+  .tool-note{margin:16px 0 0;font-size:13px;color:var(--text-dim);}
+
   .wl-card p{color:var(--text-dim);font-size:14px;margin:0 0 16px;}
   .copy-row{display:flex;align-items:center;gap:12px;justify-content:space-between;font-size:15px;}
   .copy-row button{
@@ -163,8 +171,8 @@
 
   <section id="test">
     <span class="pill">TEST RÁPIDO</span>
-    <h2>¿Qué tan sospechosa fue esa llamada?</h2>
-    <p class="lead">Responde con lo que recuerdes de la llamada, mensaje o video. Tarda menos de un minuto.</p>
+    <h2>¿Qué tan sospechoso fue ese mensaje, llamada o video?</h2>
+    <p class="lead">Responde con lo que recuerdes. Tarda menos de un minuto.</p>
     <div class="quiz-card">
       <div class="q" data-q="1">
         <p>1. ¿Pedía dinero, una transferencia o datos bancarios con urgencia?</p>
@@ -188,7 +196,14 @@
         </div>
       </div>
       <div class="q" data-q="4">
-        <p>4. ¿Intentaste llamar de vuelta al número real de esa persona y no coincidía o no contestó?</p>
+        <p>4. ¿Te llegó un mensaje de texto con un enlace que decía que tienes una multa, una sanción o una devolución de dinero pendiente?</p>
+        <div class="opts">
+          <div class="opt" data-val="2">Sí</div>
+          <div class="opt" data-val="0">No</div>
+        </div>
+      </div>
+      <div class="q" data-q="5">
+        <p>5. ¿Te pedía pulsar ese enlace o poner datos del banco para ver la multa o cobrar el dinero?</p>
         <div class="opts">
           <div class="opt" data-val="2">Sí</div>
           <div class="opt" data-val="0">No</div>
@@ -281,6 +296,35 @@
   </section>
 
   <section>
+    <span class="pill">PRÓXIMAMENTE</span>
+    <h2>El laboratorio de autenticidad</h2>
+    <p class="lead">Estamos construyendo herramientas para saber si una foto, un video o un archivo es real. Así se verán los resultados.</p>
+    <div class="tool">
+      <h4>Detector de fotos</h4>
+      <p>Sube una foto y te decimos si tiene señales de edición o de IA.</p>
+      <p class="res-warn">Ejemplo: Señales de manipulación detectadas</p>
+      <p class="conf">Nivel de confianza: alto</p>
+    </div>
+    <div class="tool">
+      <h4>Detector de videos</h4>
+      <p>Pega un enlace o sube un video y te mostramos un semáforo con el riesgo de que sea un deepfake.</p>
+      <p class="res-ok">Ejemplo: No se detectaron señales de manipulación</p>
+      <p class="conf">Nivel de confianza: medio</p>
+    </div>
+    <div class="tool">
+      <h4>Certificado de original</h4>
+      <p>Registra tu foto o video con fecha y hora. Después puedes demostrar que no se ha modificado.</p>
+      <p class="res-ok">Ejemplo: Archivo sin cambios desde el 18 nov 2026</p>
+    </div>
+    <div class="tool">
+      <h4>Comparador de versiones</h4>
+      <p>Compara el original con una copia que te llegó y te señalamos qué cambió.</p>
+      <p class="res-warn">Ejemplo: 3 diferencias encontradas</p>
+    </div>
+    <p class="tool-note">Nuestros resultados son estimaciones con un nivel de confianza, nunca una certeza absoluta.</p>
+  </section>
+
+  <section>
     <span class="pill">COMPARTIR</span>
     <h2>Protege a quien más quieres</h2>
     <p class="lead">Envía esta web a los familiares que puedan recibir una llamada falsa, sobre todo a los mayores.</p>
@@ -288,7 +332,7 @@
   </section>
 
   <section>
-    <span class="pill">PRÓXIMAMENTE</span>
+    <span class="pill">PLAN FAMILIAR</span>
     <h2>Plan familiar de protección</h2>
     <div class="wl-card">
       <p>Monitoreo y revisión prioritaria para toda la familia, pensado para proteger a los mayores de la casa. Escríbenos por WhatsApp y te avisamos al lanzar.</p>
@@ -330,7 +374,7 @@
 (function(){
   var answers = {};
   var questions = document.querySelectorAll('.q');
-  var maxScore = 8; // 2+2+2+2
+  var maxScore = 10; // 5 preguntas x 2
 
   questions.forEach(function(q){
     var qId = q.getAttribute('data-q');
@@ -370,12 +414,12 @@
     } else if (score <= 4){
       result.classList.add('mid');
       title.textContent = '⚠️ Riesgo medio';
-      text.textContent = 'Hay varias señales de alerta. No envíes dinero ni datos todavía: confirma llamando directamente al número que ya conocías de esa persona.';
+      text.textContent = 'Hay varias señales de alerta. No envíes dinero ni datos todavía y no pulses ningún enlace: confirma llamando directamente al número que ya conocías o entrando tú a la web oficial.';
       fill.style.background = 'var(--warn)';
     } else {
       result.classList.add('high');
       title.textContent = '🚨 Riesgo alto';
-      text.textContent = 'Este caso tiene el patrón típico de una estafa con voz o video clonado. No transfieras nada y envíanos el audio/video para revisión gratuita.';
+      text.textContent = 'Este caso tiene el patrón típico de una estafa. No transfieras nada, no pulses enlaces ni des datos del banco, y envíanos el audio, video o mensaje para revisión gratuita.';
       fill.style.background = 'var(--danger)';
     }
   }
