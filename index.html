@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><script async src="https://www.googletagmanager.com/gtm.js?id=GTM-WVXN2PNC"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#070a11">
+<title>EscudoIA — Protección familiar contra fraudes con IA</title>
+<meta name="description" content="Detecta llamadas, audios y videos falsificados con inteligencia artificial antes de que estafen a tu familia. Test de riesgo gratis y revisión personal en España.">
+<meta name="keywords" content="fraude con IA, voz clonada, estafa telefonica España, deepfake audio, protección familiar, estafa IA mayores">
+<link rel="canonical" href="https://escudoiapp.com/">
+<meta property="og:title" content="EscudoIA — Protección familiar contra fraudes con IA">
+<meta property="og:description" content="¿Esa llamada es tu familiar... o es IA? Te ayudamos a detectarlo antes de que sea tarde.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://escudoiapp.com/">
+<meta property="og:locale" content="es_ES">
+<meta property="og:image" content="https://escudoiapp.com/escudoia-logo.png">
+<meta name="twitter:card" content="summary">
+<meta name="robots" content="index, follow">
+<link rel="icon" type="image/png" href="/escudoia-logo.png">
+<style>
+  :root{
+    --bg:#070a11;
+    --bg-soft:#121724;
+    --accent:#4f8cff;
+    --accent-soft:#1d2a47;
+    --green:#39FF88;
+    --danger:#ff5c5c;
+    --warn:#ffb14f;
+    --ok:#39FF88;
+    --text:#eef2f9;
+    --text-dim:#a9b4c6;
+    --line:rgba(169,180,198,.18);
+    --glow:0 0 6px rgba(176,102,255,1),0 0 20px rgba(176,102,255,.75),0 0 38px rgba(176,102,255,.45);
+    --glow-sm:0 0 5px rgba(176,102,255,1),0 0 14px rgba(176,102,255,.65);
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;scroll-padding-top:70px;}
+  body{
+    margin:0;font-family:var(--font);background:var(--bg);color:var(--text);
+    line-height:1.6;position:relative;-webkit-text-size-adjust:100%;
+  }
+
+  /* Fondo 3D: resplandores + suelo de cuadrícula en perspectiva (solo decorativo) */
+  body::before{
+    content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
+    background:
+      radial-gradient(ellipse 80% 40% at 50% 0%,rgba(176,102,255,.30),transparent 70%),
+      radial-gradient(ellipse 55% 30% at 90% 50%,rgba(57,255,136,.09),transparent 70%),
+      radial-gradient(ellipse 55% 30% at 5% 78%,rgba(79,140,255,.12),transparent 70%),
+      var(--bg);
+  }
+  body::after{
+    content:"";position:fixed;left:-50%;right:-50%;bottom:0;height:55vh;z-index:-1;pointer-events:none;
+    background-image:
+      linear-gradient(rgba(57,255,136,.34) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(176,102,255,.34) 1px,transparent 1px);
+    background-size:56px 56px;
+    transform:perspective(380px) rotateX(62deg);
+    transform-origin:50% 100%;
+    -webkit-mask-image:linear-gradient(to top,rgba(0,0,0,.9),transparent 85%);
+    mask-image:linear-gradient(to top,rgba(0,0,0,.9),transparent 85%);
+    animation:gridMove 7s linear infinite;
+  }
+  @keyframes gridMove{from{background-position:0 0,0 0;}to{background-position:0 56px,0 0;}}
+  @media (prefers-reduced-motion:reduce){
+    body::after{animation:none;}
+    html{scroll-behavior:auto;}
+  }
+
+  a{color:var(--green);}
+  :focus-visible{outline:2px solid #fff;outline-offset:3px;border-radius:6px;}
+
+  /* ---------- Barra superior ---------- */
+  .topbar{
+    position:sticky;top:0;z-index:20;
+    background:rgba(7,10,17,.78);
+    -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .topbar-in{
+    max-width:720px;margin:0 auto;padding:10px 20px;
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+  }
+  .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text);font-weight:800;font-size:18px;letter-spacing:-.3px;}
+  .brand img{width:34px;height:34px;border-radius:9px;display:block;}
+  .brand span b{color:var(--green);font-weight:800;}
+  .top-cta{
+    text-decoration:none;color:var(--text);font-weight:700;font-size:14px;
+    background:var(--bg);border:1.5px solid var(--green);border-radius:10px;
+    padding:8px 14px;box-shadow:var(--glow-sm);
+  }
+
+  .wrap{max-width:720px;margin:0 auto;padding:0 20px 40px;}
+
+  /* ---------- Hero ---------- */
+  .hero{padding:52px 0 36px;}
+  .hero img.hero-logo{width:92px;height:92px;border-radius:20px;display:block;margin:0 0 26px;box-shadow:0 0 40px rgba(176,102,255,.35);}
+  h1{
+    font-size:clamp(30px,7.2vw,50px);line-height:1.08;letter-spacing:-.025em;
+    font-weight:800;margin:0 0 16px;max-width:15em;
+  }
+  .hero p.sub{font-size:clamp(16px,2.6vw,19px);color:var(--text-dim);margin:0 0 26px;max-width:32em;}
+  .hero-actions{display:flex;flex-direction:column;gap:12px;max-width:440px;}
+  .hero-actions .row{display:flex;gap:10px;}
+  .hero-note{font-size:13.5px;color:var(--text-dim);margin:16px 0 0;}
+
+  .btn-main,.wa-btn{
+    display:block;width:100%;text-align:center;text-decoration:none;
+    background:var(--accent);color:#fff;font-weight:700;font-size:16px;
+    border:1.5px solid var(--green);border-radius:12px;padding:15px;
+    box-shadow:var(--glow);cursor:pointer;font-family:inherit;
+  }
+  .btn-sec{
+    flex:1;display:block;text-align:center;text-decoration:none;
+    background:var(--bg);color:var(--text);font-weight:700;font-size:14.5px;
+    border:1.5px solid var(--green);border-radius:12px;padding:13px 8px;
+    box-shadow:var(--glow-sm);cursor:pointer;
+  }
+  .wa-btn{margin-top:18px;}
+
+  /* ---------- Secciones (texto limpio, sin recuadros) ---------- */
+  section{padding:44px 0;border-top:1px solid var(--line);}
+  .hero + section{border-top:none;}
+  h2{font-size:clamp(23px,4.6vw,31px);line-height:1.18;letter-spacing:-.02em;font-weight:800;margin:0 0 10px;max-width:20em;}
+  h3{font-size:18px;margin:0 0 6px;letter-spacing:-.01em;}
+  h4{font-size:16px;margin:0 0 4px;}
+  .lead{color:var(--text-dim);font-size:16px;margin:0 0 24px;max-width:36em;}
+
+  /* Herramientas */
+  .live-tool{padding:18px 0 28px;scroll-margin-top:80px;}
+  .live-tool + .live-tool{border-top:1px solid var(--line);padding-top:30px;}
+  .live-tool .lead{font-size:15px;margin:0 0 16px;}
+  .file-btn{
+    position:relative;display:block;text-align:center;background:var(--bg);color:var(--text);
+    font-weight:700;font-size:15px;border:1.5px solid var(--green);border-radius:12px;
+    padding:14px;box-shadow:var(--glow-sm);cursor:pointer;margin-bottom:6px;
+  }
+  .file-btn:focus-within{outline:2px solid #fff;outline-offset:3px;}
+  .file-btn input{position:absolute;opacity:0;width:1px;height:1px;overflow:hidden;}
+  .file-name{margin:0 0 16px;font-size:13px;color:var(--text-dim);text-align:center;word-break:break-all;}
+  .tool-err{display:none;margin:12px 0 0;font-size:14px;color:var(--danger);text-align:center;}
+  .tool-out{display:none;margin-top:22px;}
+  .tool-out .t{font-size:18px;font-weight:700;margin:0 0 6px;}
+  .tool-out p{margin:0 0 6px;font-size:14.5px;color:var(--text-dim);}
+  .tool-out p.small{font-size:12.5px;word-break:break-all;}
+
+  /* Test */
+  .q{margin-bottom:26px;}
+  .q p{font-size:16px;margin:0 0 12px;font-weight:600;}
+  .opts{display:flex;gap:12px;}
+  .opt{
+    flex:1;padding:12px;border-radius:10px;border:1.5px solid var(--green);
+    background:var(--bg);color:var(--text);font-size:15px;text-align:center;
+    cursor:pointer;box-shadow:var(--glow-sm);transition:.15s;
+    font-family:inherit;
+  }
+  .opt.selected{background:var(--accent-soft);box-shadow:var(--glow);font-weight:700;}
+  .bar-track{height:6px;background:var(--bg-soft);border-radius:6px;overflow:hidden;margin:8px 0 0;}
+  .bar-fill{height:100%;width:0%;background:var(--accent);transition:width .4s;}
+  .result{margin-top:20px;display:none;}
+  .result.show{display:block;}
+  .result h3{margin:0 0 6px;font-size:19px;}
+  .result.low h3{color:var(--ok);}
+  .result.mid h3{color:var(--warn);}
+  .result.high h3{color:var(--danger);}
+  .result p{margin:0;font-size:15px;color:var(--text-dim);}
+
+  /* Revisión por el equipo */
+  .status-badge{color:var(--green);font-size:14px;font-weight:700;margin-bottom:10px;}
+  .steps{margin:6px 0 0;padding:0;list-style:none;counter-reset:s;}
+  .steps li{display:flex;gap:12px;font-size:15.5px;color:var(--text-dim);padding:8px 0;counter-increment:s;}
+  .steps li::before{content:counter(s);color:var(--green);font-weight:800;min-width:18px;}
+  .num-box{margin-top:14px;font-size:13.5px;color:var(--text-dim);}
+  .num-box strong{color:var(--text);}
+  .privacy-note{margin-top:16px;font-size:13.5px;color:var(--text-dim);}
+
+  /* Listas informativas */
+  .item{padding:16px 0;border-top:1px solid var(--line);}
+  .item:first-of-type{border-top:none;padding-top:4px;}
+  .item h4{margin:0 0 4px;}
+  .item p{margin:0;font-size:15px;color:var(--text-dim);max-width:38em;}
+  .item p + p{margin-top:6px;}
+  .item p.do{color:var(--green);}
+  .cta-after{margin-top:22px;max-width:440px;}
+
+  /* Laboratorio */
+  .lab-item{padding:18px 0;border-top:1px solid var(--line);}
+  .lab-item:first-of-type{border-top:none;padding-top:4px;}
+  .lab-item h4{margin:0 0 4px;}
+  .lab-item p{margin:0 0 8px;font-size:15px;color:var(--text-dim);max-width:38em;}
+  .lab-item p.res-warn{margin:0;color:var(--warn);font-weight:700;}
+  .lab-item p.res-ok{margin:0;color:var(--ok);font-weight:700;}
+  .lab-item p.conf{margin:2px 0 0;font-size:13px;font-weight:400;color:var(--text-dim);}
+  .tool-note{margin:12px 0 0;font-size:14px;color:var(--text-dim);}
+
+  /* Preguntas frecuentes */
+  details{border-top:1px solid var(--line);padding:2px 0;}
+  details:first-of-type{border-top:none;}
+  summary{
+    cursor:pointer;list-style:none;font-weight:700;font-size:16.5px;padding:16px 0;
+    display:flex;justify-content:space-between;gap:16px;align-items:center;
+  }
+  summary::-webkit-details-marker{display:none;}
+  summary::after{content:"+";color:var(--green);font-size:22px;font-weight:400;line-height:1;transition:transform .2s;}
+  details[open] summary::after{transform:rotate(45deg);}
+  details p{margin:0 0 16px;color:var(--text-dim);font-size:15px;max-width:38em;}
+
+  /* Plan familiar */
+  .wl-card p{color:var(--text-dim);font-size:15.5px;margin:0 0 18px;max-width:36em;}
+  .copy-row{display:flex;align-items:center;gap:12px;justify-content:space-between;font-size:17px;font-weight:600;max-width:440px;}
+  .copy-row button{
+    background:var(--bg);color:var(--text);border:1.5px solid var(--green);border-radius:10px;
+    padding:9px 18px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:var(--glow-sm);font-family:inherit;
+  }
+  .copy-row button.copied{background:var(--accent-soft);}
+  .price-note{margin-top:14px;font-size:13.5px;color:var(--text-dim);}
+  .share-btn{max-width:440px;}
+
+  /* Ventanas emergentes */
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(0,0,0,.78);
+    display:none;align-items:center;justify-content:center;padding:20px;z-index:50;
+  }
+  .modal-overlay.show{display:flex;}
+  .modal-box{
+    background:#0e1320;border:1px solid var(--line);border-radius:16px;
+    padding:26px;max-width:350px;width:100%;text-align:center;
+  }
+  .modal-box h3{margin:0 0 8px;font-size:18px;}
+  .modal-box p{margin:0 0 18px;font-size:14.5px;color:var(--text-dim);}
+  .modal-btn{
+    display:block;width:100%;padding:13px;border-radius:10px;border:1.5px solid var(--green);
+    background:var(--bg);color:var(--text);font-size:14.5px;font-weight:700;
+    margin-bottom:12px;cursor:pointer;box-shadow:var(--glow-sm);font-family:inherit;
+  }
+  .modal-btn.primary{background:var(--accent);color:#fff;}
+  .modal-btn[disabled]{opacity:.4;cursor:not-allowed;box-shadow:none;}
+  .modal-close{background:none;border:none;color:var(--text-dim);font-size:14px;cursor:pointer;padding:8px;font-family:inherit;}
+  .ad-bar-track{height:6px;background:var(--bg-soft);border-radius:6px;overflow:hidden;margin:4px 0 8px;}
+  .ad-bar-fill{height:100%;width:0%;background:var(--accent);transition:width 1s linear;}
+  .ad-timer{font-size:13px;color:var(--text-dim);margin:0 0 16px;}
+
+  /* Pie */
+  footer{border-top:1px solid var(--line);padding:30px 0 20px;color:var(--text-dim);font-size:13.5px;}
+  footer .f-brand{display:flex;align-items:center;gap:10px;margin-bottom:12px;color:var(--text);font-weight:800;font-size:16px;}
+  footer .f-brand img{width:30px;height:30px;border-radius:8px;}
+  footer p{margin:0 0 10px;max-width:40em;}
+  footer .f-links{display:flex;gap:18px;flex-wrap:wrap;margin-top:6px;}
+
+  @media (min-width:760px){
+    .hero{padding:84px 0 56px;}
+    section{padding:60px 0;}
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="brand" href="#inicio" aria-label="EscudoIA, ir al inicio">
+      <img src="/escudoia-logo.png" alt="" width="34" height="34">
+      <span>Escudo<b>IA</b></span>
+    </a>
+    <a class="top-cta" href="#test">Test gratis</a>
+  </div>
+</header>
+
+<div class="wrap" id="inicio">
+
+  <div class="hero">
+    <img class="hero-logo" src="/escudoia-logo.png" alt="Logo de EscudoIA" width="92" height="92">
+    <h1>¿Te llegó una llamada, un audio o un video sospechoso?</h1>
+    <p class="sub">Comprueba en segundos si puede ser un fraude hecho con inteligencia artificial. Gratis y sin registro.</p>
+    <div class="hero-actions">
+      <a class="btn-main" href="#test">Haz el test de riesgo gratis</a>
+      <div class="row">
+        <a class="btn-sec" href="#foto">Revisar una foto</a>
+        <a class="btn-sec" href="#comparar">Comparar archivos</a>
+      </div>
+    </div>
+    <p class="hero-note">Las herramientas gratis funcionan en tu teléfono: tus archivos no salen de él.</p>
+  </div>
+
+  <section id="herramientas">
+    <h2>Revisa tus archivos</h2>
+    <p class="lead">Versiones básicas que funcionan en tu teléfono. Tus archivos no se suben a ningún sitio: se revisan aquí mismo.</p>
+
+    <div class="live-tool" id="foto">
+      <h3>Revisar una foto</h3>
+      <p class="lead">Sube una foto y buscamos señales en sus datos ocultos.</p>
+      <label class="file-btn">Elegir una foto<input type="file" id="phF" accept="image/*"></label>
+      <p class="file-name" id="phName">Ninguna foto elegida</p>
+      <button class="btn-main" id="phGo" type="button">Revisar foto</button>
+      <p class="tool-err" id="phErr" role="alert"></p>
+      <div class="tool-out" id="phOut">
+        <div class="t" id="phTitle"></div>
+        <div id="phList"></div>
+        <p class="small" style="font-size:13px;">Esta revisión básica solo mira los datos ocultos de la foto. Muchas apps, como WhatsApp, los borran al enviarla. Que no haya señales no prueba que la foto sea real.</p>
+      </div>
+    </div>
+
+    <div class="live-tool" id="comparar">
+      <h3>Comparar dos archivos</h3>
+      <p class="lead">Elige el original y la copia que te llegó, y te decimos si son idénticos.</p>
+      <label class="file-btn">Elegir el original<input type="file" id="cmpA"></label>
+      <p class="file-name" id="cmpAName">Ningún archivo elegido</p>
+      <label class="file-btn">Elegir la copia<input type="file" id="cmpB"></label>
+      <p class="file-name" id="cmpBName">Ningún archivo elegido</p>
+      <button class="btn-main" id="cmpGo" type="button">Comparar</button>
+      <p class="tool-err" id="cmpErr" role="alert"></p>
+      <div class="tool-out" id="cmpOut">
+        <div class="t" id="cmpTitle"></div>
+        <p id="cmpDesc"></p>
+        <p class="small" id="cmpHash"></p>
+      </div>
+      <canvas id="cmpC1" width="128" height="128" style="display:none;"></canvas>
+      <canvas id="cmpC2" width="128" height="128" style="display:none;"></canvas>
+    </div>
+  </section>
+
+  <section id="test">
+    <h2>¿Qué tan sospechoso fue ese mensaje, llamada o video?</h2>
+    <p class="lead">Responde con lo que recuerdes. Tarda menos de un minuto.</p>
+    <div class="quiz-card">
+      <div class="q" data-q="1">
+        <p>1. ¿Pedía dinero, una transferencia o datos bancarios con urgencia?</p>
+        <div class="opts">
+          <button type="button" class="opt" data-val="2">Sí</button>
+          <button type="button" class="opt" data-val="0">No</button>
+        </div>
+      </div>
+      <div class="q" data-q="2">
+        <p>2. ¿Pedía que no colgaras, no avisaras a nadie más o actuaras en secreto?</p>
+        <div class="opts">
+          <button type="button" class="opt" data-val="2">Sí</button>
+          <button type="button" class="opt" data-val="0">No</button>
+        </div>
+      </div>
+      <div class="q" data-q="3">
+        <p>3. ¿La voz o el video tenían algo raro: tono robótico, cortes, retraso o gestos extraños?</p>
+        <div class="opts">
+          <button type="button" class="opt" data-val="2">Sí</button>
+          <button type="button" class="opt" data-val="0">No</button>
+        </div>
+      </div>
+      <div class="q" data-q="4">
+        <p>4. ¿Te llegó un mensaje de texto con un enlace que decía que tienes una multa, una sanción o una devolución de dinero pendiente?</p>
+        <div class="opts">
+          <button type="button" class="opt" data-val="2">Sí</button>
+          <button type="button" class="opt" data-val="0">No</button>
+        </div>
+      </div>
+      <div class="q" data-q="5">
+        <p>5. ¿Te pedía pulsar ese enlace o poner datos del banco para ver la multa o cobrar el dinero?</p>
+        <div class="opts">
+          <button type="button" class="opt" data-val="2">Sí</button>
+          <button type="button" class="opt" data-val="0">No</button>
+        </div>
+      </div>
+
+      <div class="bar-track"><div class="bar-fill" id="barFill"></div></div>
+
+      <div class="result" id="result" aria-live="polite">
+        <h3 id="resTitle"></h3>
+        <p id="resText"></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="revision">
+    <h2>¿Es un caso importante? Lo revisa una persona</h2>
+    <p class="lead">Para un video, audio o mensaje que puede costarte dinero o perjudicar a alguien. Nuestro equipo lo revisa con más detalle y te explica qué encontró. Para dudas rápidas, usa las herramientas gratis de arriba.</p>
+    <div class="review-card">
+      <div class="status-badge" id="statusBadge">Primera revisión: gratis</div>
+      <ol class="steps">
+        <li>Guarda el audio o la captura del video en tu teléfono.</li>
+        <li>Envíalo por correo con el botón de abajo, contando qué pasó.</li>
+        <li>Te respondemos en 24-48 horas con el resultado y qué hacer.</li>
+      </ol>
+      <a class="wa-btn" id="waBtn" href="mailto:contacto@escudoiapp.com?subject=Revisi%C3%B3n%20de%20un%20caso%20sospechoso&body=Hola%2C%20quiero%20que%20revisen%20un%20audio%2Fvideo%20sospechoso.%20Adjunto%20el%20archivo." style="max-width:440px;">
+        Enviar por correo
+      </a>
+      <div class="num-box">Si el botón no abre tu correo, escribe a <strong>contacto@escudoiapp.com</strong> y adjunta el archivo.</div>
+      <p class="privacy-note">Una persona de nuestro equipo puede ver el audio o video que envíes. Solo se usa para analizarlo y se borra en 24 horas.</p>
+    </div>
+  </section>
+
+  <section id="senales">
+    <h2>Cómo reconocer una voz o un video clonado</h2>
+    <p class="lead">Bastan unos minutos de audio para clonar una voz, así que sonar igual ya no prueba nada. Fíjate en cómo te lo piden.</p>
+    <div class="item">
+      <h4>Urgencia extrema</h4>
+      <p>Pide actuar ya, sin tiempo para pensar ni consultar con nadie.</p>
+    </div>
+    <div class="item">
+      <h4>Secreto</h4>
+      <p>Pide que no se lo cuentes a otros familiares, al banco o a la policía.</p>
+    </div>
+    <div class="item">
+      <h4>Dinero o datos</h4>
+      <p>Termina siempre pidiendo una transferencia, un Bizum, códigos o claves.</p>
+    </div>
+    <div class="item">
+      <h4>Audio "casi perfecto"</h4>
+      <p>Suena igual, pero algo no cuadra: ritmo raro, silencios, frases genéricas.</p>
+    </div>
+    <div class="item">
+      <h4>Canal distinto</h4>
+      <p>Llama un familiar "desde otro número" porque "se le rompió el móvil".</p>
+    </div>
+  </section>
+
+  <section id="ejemplos">
+    <h2>Así te engañan por llamada, video y mensaje</h2>
+    <p class="lead">Cinco casos muy comunes en España. Si te suena alguno, para y comprueba.</p>
+    <div class="item">
+      <h4>"Mamá, cambié de número"</h4>
+      <p>Te dicen: "Soy yo, se me rompió el móvil. Necesito un Bizum urgente y no se lo cuentes a papá."</p>
+      <p class="do">Qué hacer: cuelga y llama tú al número de siempre.</p>
+    </div>
+    <div class="item">
+      <h4>Llamada "del banco"</h4>
+      <p>Te dicen: "Detectamos un cargo raro. Dinos el código que te acaba de llegar por SMS."</p>
+      <p class="do">Qué hacer: ningún banco pide códigos por teléfono. Cuelga y llama al número de tu tarjeta.</p>
+    </div>
+    <div class="item">
+      <h4>Video de un conocido</h4>
+      <p>Te llega un video de alguien que conoces pidiendo dinero o una inversión "ya". La voz suena casi igual, pero algo no cuadra.</p>
+      <p class="do">Qué hacer: escríbele o llámale por otra vía antes de enviar nada.</p>
+    </div>
+    <div class="item">
+      <h4>SMS de una "multa pendiente"</h4>
+      <p>Te dicen: "Tienes una multa sin pagar. Pulsa aquí para ver los detalles." El enlace imita una web oficial y roba tus datos.</p>
+      <p class="do">Qué hacer: no pulses el enlace. Consulta tus multas entrando tú mismo a la web oficial.</p>
+    </div>
+    <div class="item">
+      <h4>Mensaje de "devolución de dinero"</h4>
+      <p>Te dicen: "Hacienda te debe una devolución. Pulsa el enlace y pon tus datos bancarios para recibirla."</p>
+      <p class="do">Qué hacer: no pulses el enlace ni des datos del banco. Revisa tus devoluciones entrando tú a la web oficial.</p>
+    </div>
+    <a class="btn-main cta-after" href="#test">Haz el test de riesgo gratis</a>
+  </section>
+
+  <section id="laboratorio">
+    <h2>El laboratorio de autenticidad</h2>
+    <p class="lead">Estamos construyendo herramientas para saber si una foto, un video o un archivo es real. Así se verán los resultados cuando estén listas.</p>
+    <div class="lab-item">
+      <h4>Detector de fotos con IA</h4>
+      <p>Sube una foto y te decimos si tiene señales de edición o de haber sido creada con IA.</p>
+      <p class="res-warn">Ejemplo: señales de manipulación detectadas</p>
+      <p class="conf">Nivel de confianza: alto</p>
+    </div>
+    <div class="lab-item">
+      <h4>Detector de videos</h4>
+      <p>Pega un enlace o sube un video y te mostramos un semáforo con el riesgo de que sea un deepfake.</p>
+      <p class="res-ok">Ejemplo: no se detectaron señales de manipulación</p>
+      <p class="conf">Nivel de confianza: medio</p>
+    </div>
+    <div class="lab-item">
+      <h4>Certificado de original</h4>
+      <p>Registra tu foto o video con fecha y hora. Después puedes demostrar que no se ha modificado.</p>
+      <p class="res-ok">Ejemplo: archivo sin cambios desde el 18 nov 2026</p>
+    </div>
+    <p class="tool-note">Nuestros resultados son estimaciones con un nivel de confianza, nunca una certeza absoluta.</p>
+  </section>
+
+  <section id="preguntas">
+    <h2>Preguntas frecuentes</h2>
+    <details>
+      <summary>¿Mis archivos se suben a algún sitio?</summary>
+      <p>Con las herramientas gratis, no: la foto o los archivos se revisan en tu propio teléfono. Solo si envías un caso por correo para revisión personal, una persona de nuestro equipo lo verá, lo usará únicamente para analizarlo y lo borrará en 24 horas.</p>
+    </details>
+    <details>
+      <summary>¿Qué tan fiable es el resultado?</summary>
+      <p>Son estimaciones, nunca una certeza absoluta. Ningún análisis sustituye la verificación directa: si dudas, llama tú al familiar por un número que ya conocías.</p>
+    </details>
+    <details>
+      <summary>¿Cuánto cuesta?</summary>
+      <p>El test de riesgo y las herramientas básicas son gratis. La primera revisión personal también. Para pedir más, puedes ver un video publicitario y tener 3 horas de acceso, o suscribirte sin anuncios.</p>
+    </details>
+    <details>
+      <summary>¿Cuánto tarda la revisión personal?</summary>
+      <p>Entre 24 y 48 horas. Te respondemos por correo con el resultado y qué hacer.</p>
+    </details>
+  </section>
+
+  <section id="compartir">
+    <h2>Protege a quien más quieres</h2>
+    <p class="lead">Envía esta web a los familiares que puedan recibir una llamada falsa, sobre todo a los mayores.</p>
+    <a class="btn-main share-btn" href="https://wa.me/?text=%C2%BFTe%20lleg%C3%B3%20una%20llamada%20o%20un%20audio%20sospechoso%3F%20Haz%20el%20test%20de%20riesgo%20gratis%20en%20https%3A%2F%2Fescudoiapp.com" target="_blank" rel="noopener">Compartir por WhatsApp</a>
+  </section>
+
+  <section id="plan-familiar">
+    <h2>Plan familiar de protección</h2>
+    <div class="wl-card">
+      <p>Monitoreo y revisión prioritaria para toda la familia, pensado para proteger a los mayores de la casa. Escríbenos a <a href="mailto:contacto@escudoiapp.com">contacto@escudoiapp.com</a> y te avisamos al lanzar.</p>
+      <div class="price-note">Precio de lanzamiento: desde 4,99 €/mes por familia (aún sin confirmar).</div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="f-brand"><img src="/escudoia-logo.png" alt="" width="30" height="30" loading="lazy"><span>EscudoIA</span></div>
+    <p>EscudoIA es un proyecto en construcción. Ningún análisis aquí sustituye la verificación directa con tu familiar por una vía ya conocida.</p>
+    <div class="f-links">
+      <a href="/privacidad.html">Privacidad y términos</a>
+      <a href="mailto:contacto@escudoiapp.com">Contacto</a>
+    </div>
+  </footer>
+</div>
+
+<div class="modal-overlay" id="paywallOverlay" role="dialog" aria-modal="true" aria-labelledby="pwTitle">
+  <div class="modal-box">
+    <h3 id="pwTitle">Ya usaste tu revisión gratuita</h3>
+    <p>Para seguir usando las herramientas de EscudoIA, elige una opción:</p>
+    <button class="modal-btn primary" id="watchAdBtn" type="button">Ver un video publicitario (3 h gratis)</button>
+    <button class="modal-btn" id="goSubBtn" type="button">Suscribirme sin anuncios</button>
+    <button class="modal-close" id="closePaywall" type="button">Cancelar</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="adOverlay" role="dialog" aria-modal="true" aria-labelledby="adTitle">
+  <div class="modal-box">
+    <h3 id="adTitle">Reproduciendo anuncio…</h3>
+    <p id="adDesc">Tu acceso se desbloquea al terminar.</p>
+    <div class="ad-bar-track"><div class="ad-bar-fill" id="adBarFill"></div></div>
+    <p class="ad-timer" id="adTimer">15s</p>
+    <button class="modal-btn primary" id="adContinueBtn" type="button" disabled>Continuar</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var answers = {};
+  var questions = document.querySelectorAll('.q');
+  var maxScore = 10; // 5 preguntas x 2
+
+  questions.forEach(function(q){
+    var qId = q.getAttribute('data-q');
+    var opts = q.querySelectorAll('.opt');
+    opts.forEach(function(opt){
+      opt.addEventListener('click', function(){
+        opts.forEach(function(o){ o.classList.remove('selected'); });
+        opt.classList.add('selected');
+        answers[qId] = parseInt(opt.getAttribute('data-val'), 10);
+        updateResult();
+      });
+    });
+  });
+
+  function updateResult(){
+    var answered = Object.keys(answers).length;
+    var score = 0;
+    for (var k in answers){ score += answers[k]; }
+
+    var fill = document.getElementById('barFill');
+    var pct = Math.min(100, Math.round((score / maxScore) * 100));
+    fill.style.width = pct + '%';
+
+    if (answered < questions.length) return;
+
+    var result = document.getElementById('result');
+    var title = document.getElementById('resTitle');
+    var text = document.getElementById('resText');
+    result.classList.add('show');
+    result.classList.remove('low','mid','high');
+
+    if (score <= 2){
+      result.classList.add('low');
+      title.textContent = 'Riesgo bajo';
+      text.textContent = 'No hay señales fuertes de fraude, pero si pidió dinero o datos, siempre confirma por otra vía antes de actuar.';
+      fill.style.background = 'var(--ok)';
+    } else if (score <= 4){
+      result.classList.add('mid');
+      title.textContent = 'Riesgo medio';
+      text.textContent = 'Hay varias señales de alerta. No envíes dinero ni datos todavía y no pulses ningún enlace: confirma llamando directamente al número que ya conocías o entrando tú a la web oficial.';
+      fill.style.background = 'var(--warn)';
+    } else {
+      result.classList.add('high');
+      title.textContent = 'Riesgo alto';
+      text.textContent = 'Este caso tiene el patrón típico de una estafa. No transfieras nada, no pulses enlaces ni des datos del banco, y envíanos el audio, video o mensaje por correo para revisión gratuita.';
+      fill.style.background = 'var(--danger)';
+    }
+  }
+
+})();
+</script>
+
+<script>
+(function(){
+  var FREE_KEY = 'escudoia_free_used';
+  var UNLOCK_KEY = 'escudoia_unlock_until';
+  var UNLOCK_HOURS = 3;
+  var AD_SECONDS = 15;
+
+  function getState(){
+    var freeUsed = false, unlockUntil = 0;
+    try{
+      freeUsed = localStorage.getItem(FREE_KEY) === '1';
+      unlockUntil = parseInt(localStorage.getItem(UNLOCK_KEY) || '0', 10);
+    }catch(e){}
+    return { freeUsed: freeUsed, unlockUntil: unlockUntil };
+  }
+
+  function isUnlocked(){
+    var s = getState();
+    return !s.freeUsed || Date.now() < s.unlockUntil;
+  }
+
+  function markFreeUsed(){
+    try{ localStorage.setItem(FREE_KEY, '1'); }catch(e){}
+  }
+
+  function grantUnlock(){
+    try{ localStorage.setItem(UNLOCK_KEY, String(Date.now() + UNLOCK_HOURS*3600*1000)); }catch(e){}
+  }
+
+  function updateBadge(){
+    var badge = document.getElementById('statusBadge');
+    if(!badge) return;
+    var s = getState();
+    if(!s.freeUsed){
+      badge.textContent = 'Primera revisión: gratis';
+    } else if (Date.now() < s.unlockUntil){
+      var hoursLeft = Math.max(1, Math.ceil((s.unlockUntil - Date.now())/3600000));
+      badge.textContent = 'Desbloqueado · ' + hoursLeft + ' h restantes';
+    } else {
+      badge.textContent = 'Requiere suscripción o ver un anuncio';
+    }
+  }
+
+  var waBtn = document.getElementById('waBtn');
+  var paywallOverlay = document.getElementById('paywallOverlay');
+  var adOverlay = document.getElementById('adOverlay');
+  var adTitle = document.getElementById('adTitle');
+  var adDesc = document.getElementById('adDesc');
+  var adBarFill = document.getElementById('adBarFill');
+  var adTimer = document.getElementById('adTimer');
+  var adContinueBtn = document.getElementById('adContinueBtn');
+  var adInterval = null;
+
+  if (waBtn){
+    waBtn.addEventListener('click', function(e){
+      if (isUnlocked()){
+        if (!getState().freeUsed){ markFreeUsed(); }
+        updateBadge();
+        return;
+      }
+      e.preventDefault();
+      paywallOverlay.classList.add('show');
+    });
+  }
+
+  document.getElementById('closePaywall').addEventListener('click', function(){
+    paywallOverlay.classList.remove('show');
+  });
+
+  document.getElementById('goSubBtn').addEventListener('click', function(){
+    paywallOverlay.classList.remove('show');
+    var wl = document.querySelector('.wl-card');
+    if (wl) wl.scrollIntoView({behavior:'smooth', block:'center'});
+  });
+
+  document.getElementById('watchAdBtn').addEventListener('click', function(){
+    paywallOverlay.classList.remove('show');
+    adTitle.textContent = 'Reproduciendo anuncio…';
+    adDesc.textContent = 'Tu acceso se desbloquea al terminar.';
+    adContinueBtn.disabled = true;
+    var secs = AD_SECONDS;
+    adBarFill.style.width = '0%';
+    adTimer.textContent = secs + 's';
+    adOverlay.classList.add('show');
+    if (adInterval) clearInterval(adInterval);
+    adInterval = setInterval(function(){
+      secs -= 1;
+      var pct = Math.round(((AD_SECONDS-secs)/AD_SECONDS)*100);
+      adBarFill.style.width = pct + '%';
+      adTimer.textContent = Math.max(secs,0) + 's';
+      if (secs <= 0){
+        clearInterval(adInterval);
+        grantUnlock();
+        updateBadge();
+        adTitle.textContent = '¡Desbloqueado!';
+        adDesc.textContent = 'Ya tienes ' + UNLOCK_HOURS + ' horas de acceso. Pulsa continuar y vuelve a tocar el botón de correo.';
+        adContinueBtn.disabled = false;
+      }
+    }, 1000);
+  });
+
+  adContinueBtn.addEventListener('click', function(){
+    adOverlay.classList.remove('show');
+  });
+
+  updateBadge();
+})();
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/exifr/dist/full.umd.js"></script>
+<script>
+(function(){
+  function $(id){ return document.getElementById(id); }
+
+  /* ---------- Revisar una foto ---------- */
+  var photo = null;
+  $('phF').addEventListener('change', function(e){
+    photo = e.target.files[0] || null;
+    $('phName').textContent = photo ? photo.name : 'Ninguna foto elegida';
+  });
+
+  function addRow(parent, txt, color){
+    var p = document.createElement('p');
+    p.style.color = color;
+    p.textContent = txt;
+    parent.appendChild(p);
+  }
+
+  $('phGo').addEventListener('click', async function(){
+    var err = $('phErr'), out = $('phOut'), list = $('phList'), title = $('phTitle');
+    err.style.display = 'none'; out.style.display = 'none'; list.innerHTML = '';
+    if (!photo){ err.textContent = 'Elige una foto primero.'; err.style.display = 'block'; return; }
+    if (typeof exifr === 'undefined'){ err.textContent = 'No se pudo cargar la revisión. Revisa tu conexión e inténtalo de nuevo.'; err.style.display = 'block'; return; }
+    var d = null;
+    try{ d = await exifr.parse(photo, true); }catch(e){ d = null; }
+    d = d || {};
+    var sw = ((d.Software || '') + ' ' + (d.ProcessingSoftware || '') + ' ' + (d.CreatorTool || '')).trim();
+    var re = /photoshop|lightroom|gimp|snapseed|canva|picsart|facetune|midjourney|dall|stable|firefly|openai|affinity|pixelmator/i;
+    var flagged = re.test(sw);
+    if (flagged){
+      title.style.color = 'var(--warn)';
+      title.textContent = 'Señales de manipulación detectadas';
+      addRow(list, 'Se encontró un programa de edición o de IA en los datos: ' + sw + '.', 'var(--warn)');
+    } else {
+      title.style.color = 'var(--text)';
+      title.textContent = 'No encontramos señales en los datos ocultos';
+      addRow(list, 'Con esta revisión básica todavía no podemos confirmar si la foto es real.', 'var(--text-dim)');
+    }
+    var cam = ((d.Make || '') + ' ' + (d.Model || '')).trim();
+    if (cam){ addRow(list, 'Datos de cámara: ' + cam + '.', 'var(--text-dim)'); }
+    else { addRow(list, 'No hay datos de cámara. Es común si la foto pasó por WhatsApp o es una captura.', 'var(--text-dim)'); }
+    var dt = d.DateTimeOriginal || d.CreateDate;
+    if (dt){ addRow(list, 'Fecha de la foto: ' + (dt instanceof Date ? dt.toLocaleDateString('es-ES') : dt) + '.', 'var(--text-dim)'); }
+    else { addRow(list, 'No hay fecha de captura guardada.', 'var(--text-dim)'); }
+    out.style.display = 'block';
+  });
+
+  /* ---------- Comparar dos archivos ---------- */
+  var fileA = null, fileB = null;
+  $('cmpA').addEventListener('change', function(e){
+    fileA = e.target.files[0] || null;
+    $('cmpAName').textContent = fileA ? fileA.name : 'Ningún archivo elegido';
+  });
+  $('cmpB').addEventListener('change', function(e){
+    fileB = e.target.files[0] || null;
+    $('cmpBName').textContent = fileB ? fileB.name : 'Ningún archivo elegido';
+  });
+
+  function toHex(buf){
+    return Array.from(new Uint8Array(buf)).map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
+  }
+  async function sha(f){
+    var b = await f.arrayBuffer();
+    var h = await crypto.subtle.digest('SHA-256', b);
+    return toHex(h);
+  }
+  function loadImg(f){
+    return new Promise(function(res, rej){
+      var u = URL.createObjectURL(f);
+      var i = new Image();
+      i.onload = function(){ res(i); };
+      i.onerror = function(){ rej(); };
+      i.src = u;
+    });
+  }
+  async function visualDiff(f1, f2){
+    var i1 = await loadImg(f1), i2 = await loadImg(f2);
+    var c1 = $('cmpC1'), c2 = $('cmpC2');
+    var x1 = c1.getContext('2d'), x2 = c2.getContext('2d');
+    x1.drawImage(i1, 0, 0, 128, 128);
+    x2.drawImage(i2, 0, 0, 128, 128);
+    var d1 = x1.getImageData(0, 0, 128, 128).data;
+    var d2 = x2.getImageData(0, 0, 128, 128).data;
+    var n = 0, tot = 128 * 128;
+    for (var p = 0; p < d1.length; p += 4){
+      var s = Math.abs(d1[p]-d2[p]) + Math.abs(d1[p+1]-d2[p+1]) + Math.abs(d1[p+2]-d2[p+2]);
+      if (s > 60) n++;
+    }
+    return Math.round((n / tot) * 1000) / 10;
+  }
+
+  $('cmpGo').addEventListener('click', async function(){
+    var err = $('cmpErr'), out = $('cmpOut');
+    err.style.display = 'none'; out.style.display = 'none';
+    if (!fileA || !fileB){ err.textContent = 'Elige los dos archivos primero.'; err.style.display = 'block'; return; }
+    var ha, hb;
+    try{
+      ha = await sha(fileA); hb = await sha(fileB);
+    }catch(e){
+      err.textContent = 'No se pudo leer uno de los archivos. Inténtalo de nuevo.'; err.style.display = 'block'; return;
+    }
+    var t = $('cmpTitle'), d = $('cmpDesc');
+    if (ha === hb){
+      t.style.color = 'var(--ok)';
+      t.textContent = 'Los archivos son idénticos';
+      d.textContent = 'Tienen exactamente el mismo contenido, byte a byte.';
+    } else {
+      t.style.color = 'var(--warn)';
+      t.textContent = 'Los archivos son diferentes';
+      var msg = 'No tienen el mismo contenido.';
+      if (fileA.type.indexOf('image/') === 0 && fileB.type.indexOf('image/') === 0){
+        try{
+          var pct = await visualDiff(fileA, fileB);
+          if (pct < 1){ msg = 'A simple vista se ven iguales, pero el archivo cambió. Pasa al enviarlo por WhatsApp o al recomprimirlo.'; }
+          else { msg = 'Hay diferencias visibles: aproximadamente el ' + pct + '% de la imagen es distinto.'; }
+        }catch(e){}
+      }
+      d.textContent = msg;
+    }
+    $('cmpHash').textContent = 'Huella del original: ' + ha.slice(0,16) + '… · de la copia: ' + hb.slice(0,16) + '…';
+    out.style.display = 'block';
+  });
+})();
+</script>
+</body>
+</html>
