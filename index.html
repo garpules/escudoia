@@ -278,18 +278,25 @@
     <h1>¿Te llegó una llamada, un audio o un video sospechoso?</h1>
     <p class="sub">Comprueba en segundos si puede ser un fraude hecho con inteligencia artificial. Gratis y sin registro.</p>
     <div class="hero-actions">
-      <a class="btn-main" href="#test">Haz el test de riesgo gratis</a>
+      <a class="btn-main" href="/comprobador.html">Comprobar un mensaje o enlace</a>
       <div class="row">
-        <a class="btn-sec" href="#foto">Revisar una foto</a>
-        <a class="btn-sec" href="#comparar">Comparar archivos</a>
+        <a class="btn-sec" href="#test">Test</a>
+        <a class="btn-sec" href="#foto">Foto</a>
+        <a class="btn-sec" href="#comparar">Comparar</a>
       </div>
     </div>
     <p class="hero-note">Las herramientas gratis funcionan en tu teléfono: tus archivos no salen de él.</p>
   </div>
 
   <section id="herramientas">
-    <h2>Revisa tus archivos</h2>
+    <h2>Herramientas gratis</h2>
     <p class="lead">Versiones básicas que funcionan en tu teléfono. Tus archivos no se suben a ningún sitio: se revisan aquí mismo.</p>
+
+    <div class="live-tool" id="mensajes">
+      <h3>Comprobar un mensaje o enlace</h3>
+      <p class="lead">Pega un SMS, un correo o un enlace y te decimos si conviene abrirlo: verde, amarillo o rojo.</p>
+      <a class="btn-main" href="/comprobador.html">Abrir el comprobador</a>
+    </div>
 
     <div class="live-tool" id="foto">
       <h3>Revisar una foto</h3>
@@ -814,114 +821,4 @@
       if (fileA.type.indexOf('image/') === 0 && fileB.type.indexOf('image/') === 0){
         try{
           var pct = await visualDiff(fileA, fileB);
-          if (pct < 1){ msg = 'A simple vista se ven iguales, pero el archivo cambió. Pasa al enviarlo por WhatsApp o al recomprimirlo.'; }
-          else { msg = 'Hay diferencias visibles: aproximadamente el ' + pct + '% de la imagen es distinto.'; }
-        }catch(e){}
-      }
-      d.textContent = msg;
-    }
-    $('cmpHash').textContent = 'Huella del original: ' + ha.slice(0,16) + '… · de la copia: ' + hb.slice(0,16) + '…';
-    out.style.display = 'block';
-  });
-})();
-</script>
-<script>
-/* Seguimiento de uso (Google Analytics). No envía datos personales ni archivos. */
-(function(){
-  function track(name, params){
-    try{ gtag('event', name, params || {}); }catch(e){}
-  }
-  var $ = function(id){ return document.getElementById(id); };
-
-  /* ---- Visitante humano: solo cuenta si hay una acción real (toque, tecla o scroll) tras 2 s en la página ---- */
-  var t0 = Date.now(), humano = false;
-  function marcarHumano(e){
-    if (humano || (e && e.isTrusted === false)) return;
-    if (Date.now() - t0 < 2000) return;
-    humano = true;
-    try{ gtag('set', 'user_properties', { tipo_visitante: 'humano' }); }catch(err){}
-    track('humano_verificado', { segundos: Math.round((Date.now()-t0)/1000) });
-    ['pointerdown','touchstart','keydown','scroll'].forEach(function(ev){
-      window.removeEventListener(ev, marcarHumano, true);
-    });
-  }
-  ['pointerdown','touchstart','keydown','scroll'].forEach(function(ev){
-    window.addEventListener(ev, marcarHumano, {capture:true, passive:true});
-  });
-
-  /* ---- Secciones vistas (una vez por visita) ---- */
-  if ('IntersectionObserver' in window){
-    var vistas = {};
-    var io = new IntersectionObserver(function(entries){
-      entries.forEach(function(en){
-        if (en.isIntersecting && !vistas[en.target.id]){
-          vistas[en.target.id] = true;
-          track('seccion_vista', { seccion: en.target.id });
-          io.unobserve(en.target);
-        }
-      });
-    }, { threshold: 0.35 });
-    document.querySelectorAll('section[id]').forEach(function(sec){ io.observe(sec); });
-  }
-
-  /* ---- Test de riesgo ---- */
-  var testIniciado = false;
-  document.querySelectorAll('.opt').forEach(function(b){
-    b.addEventListener('click', function(){
-      if (!testIniciado){ testIniciado = true; track('test_iniciado'); }
-    });
-  });
-  var res = $('result');
-  if (res){
-    new MutationObserver(function(){
-      if (!res.classList.contains('show')) return;
-      var nivel = res.classList.contains('high') ? 'alto' : (res.classList.contains('mid') ? 'medio' : 'bajo');
-      track('test_completado', { resultado: nivel });
-    }).observe(res, { attributes: true, attributeFilter: ['class'] });
-  }
-
-  /* ---- Revisar una foto ---- */
-  var phOut = $('phOut');
-  if (phOut){
-    new MutationObserver(function(){
-      if (phOut.style.display !== 'block') return;
-      var t = ($('phTitle').textContent || '');
-      track('foto_revisada', { senales: t.indexOf('Señales') === 0 ? 'si' : 'no' });
-    }).observe(phOut, { attributes: true, attributeFilter: ['style'] });
-  }
-
-  /* ---- Comparar archivos ---- */
-  var cmpOut = $('cmpOut');
-  if (cmpOut){
-    new MutationObserver(function(){
-      if (cmpOut.style.display !== 'block') return;
-      var t = ($('cmpTitle').textContent || '');
-      track('archivos_comparados', { resultado: t.indexOf('idénticos') > -1 ? 'identicos' : 'diferentes' });
-    }).observe(cmpOut, { attributes: true, attributeFilter: ['style'] });
-  }
-
-  /* ---- Botones y enlaces ---- */
-  var wa = $('waBtn');
-  if (wa){ wa.addEventListener('click', function(){ track('revision_correo_click'); }, true); }
-  document.querySelectorAll('a[href^="mailto:"]').forEach(function(a){
-    a.addEventListener('click', function(){ track('correo_click'); });
-  });
-  document.querySelectorAll('.share-btn').forEach(function(a){
-    a.addEventListener('click', function(){ track('compartir_whatsapp_click'); });
-  });
-
-  /* ---- Paywall y anuncio ---- */
-  var pw = $('paywallOverlay');
-  if (pw){
-    new MutationObserver(function(){
-      if (pw.classList.contains('show')) track('paywall_visto');
-    }).observe(pw, { attributes: true, attributeFilter: ['class'] });
-  }
-  var wb = $('watchAdBtn');
-  if (wb){ wb.addEventListener('click', function(){ track('anuncio_iniciado'); }); }
-  var gs = $('goSubBtn');
-  if (gs){ gs.addEventListener('click', function(){ track('suscripcion_click'); }); }
-})();
-</script>
-</body>
-</html>
+          if (pct < 1){ msg = 'A simple vista se ven iguales, pero el archivo cambió. Pasa al enviarlo por WhatsApp o
