@@ -1,1 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Comprobador de enlaces y mensajes | EscudoIA</title>
+<meta name="description" content="Pega un mensaje o un enlace y comprueba en 5 segundos si conviene abrirlo. Gratis, sin instalar nada y se analiza en tu dispositivo.">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-EX9MNLHWH7"></script>
+<script>
+window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+gtag('js',new Date());gtag('config','G-EX9MNLHWH7');
+</script>
+<style>
+:root{--bg:#070a12;--card:#0e1322;--tx:#e8ecf6;--mut:#9aa3b8;--neon:#39ff88;--vio:#8b3dff;--ok:#22c55e;--warn:#f5b301;--bad:#ef4444}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(1200px 600px at 50% -10%,#1a1240 0%,var(--bg) 60%);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.5;min-height:100vh}
+.wrap{max-width:720px;margin:0 auto;padding:20px 16px 48px}
+a.back{color:var(--mut);text-decoration:none;font-size:.95rem}
+h1{font-size:1.7rem;line-height:1.2;margin:18px 0 8px}
+.sub{color:var(--mut);margin:0 0 20px}
+textarea{width:100%;min-height:150px;background:var(--card);color:var(--tx);border:1px solid #26304d;border-radius:12px;padding:14px;font:inherit;resize:vertical}
+textarea:focus{outline:none;border-color:var(--neon);box-shadow:0 0 0 3px rgba(139,61,255,.35)}
+.row{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0}
+button{font:inherit;cursor:pointer;border-radius:12px;padding:12px 18px;color:var(--tx);background:transparent;border:2px solid var(--neon);box-shadow:0 0 14px rgba(139,61,255,.55)}
+button:active{transform:scale(.98)}
+button.main{background:rgba(57,255,136,.12);font-weight:700;flex:1 1 auto}
+button.small{padding:8px 12px;font-size:.9rem;border-width:1px}
+#res{display:none;margin-top:22px;background:var(--card);border-radius:14px;padding:18px;border-left:8px solid var(--mut)}
+#res.green{border-left-color:var(--ok)}#res.yellow{border-left-color:var(--warn)}#res.red{border-left-color:var(--bad)}
+#res h2{margin:0 0 4px;font-size:1.35rem}
+#res.green h2{color:var(--ok)}#res.yellow h2{color:var(--warn)}#res.red h2{color:var(--bad)}
+#res ul{padding-left:20px;margin:10px 0}
+#res li{margin:4px 0}
+.adv{margin:12px 0 4px;font-weight:600}
+.fb{margin-top:14px;padding-top:12px;border-top:1px solid #26304d}
+.fb p{margin:0 0 8px;color:var(--mut);font-size:.9rem}
+.priv{margin-top:26px;color:var(--mut);font-size:.88rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="/">&larr; Volver a EscudoIA</a>
+<h1>Comprueba tus enlaces y mensajes en 5 segundos</h1>
+<p class="sub">Pega lo que te ha llegado y te decimos qué conviene abrir y qué no. Gratis, sin instalar nada.</p>
 
+<textarea id="txt" placeholder="Pega aquí el mensaje, el correo o el enlace que te ha llegado..."></textarea>
+<div class="row">
+<button class="main" id="go">Analizar</button>
+<button id="clr">Limpiar</button>
+</div>
+<div class="row">
+<button class="small" data-ex="Correos: tu paquete esta retenido. Paga 1,99 EUR de gastos de envio hoy mismo o sera devuelto: bit.ly/3xYz9Ab">Probar: mensaje falso de Correos</button>
+<button class="small" data-ex="Hola, te escribo de la secretaria. La matricula esta disponible en https://www.ucm.es/estudios">Probar: enlace de universidad</button>
+</div>
+
+<div id="res" role="status" aria-live="polite">
+<h2 id="rt"></h2>
+<div id="rs"></div>
+<ul id="rl"></ul>
+<div class="adv" id="ra"></div>
+<div class="row"><button class="small" id="share">Compartir esta herramienta por WhatsApp</button></div>
+<div class="fb" id="fb"><p>¿Fue acertado el resultado?</p>
+<div class="row"><button class="small" data-f="legitimo">Era legítimo</button><button class="small" data-f="estafa">Era una estafa</button></div></div>
+</div>
+
+<p class="priv">Lo que pegas se analiza en tu propio dispositivo: no lo enviamos ni lo guardamos. Es una ayuda orientativa y puede equivocarse. Ante la duda, contacta tú con la entidad por sus canales oficiales.</p>
+</div>
+
+<script>
+var OFFICIAL=[
+["Correos",["correos.es","correos.com"],["correos"]],
+["la Agencia Tributaria",["agenciatributaria.gob.es","agenciatributaria.es","hacienda.gob.es"],["agencia tributaria","agenciatributaria","hacienda"]],
+["la DGT",["dgt.es","dgt.gob.es"],["dgt"]],
+["la Seguridad Social",["seg-social.es","seg-social.gob.es"],["seguridad social","seg-social"]],
+["BBVA",["bbva.es","bbva.com"],["bbva"]],
+["Santander",["santander.com","santander.es","bancosantander.es"],["santander"]],
+["CaixaBank",["caixabank.es","caixabank.com"],["caixabank"]],
+["Sabadell",["bancsabadell.com","sabadell.com"],["sabadell"]],
+["PayPal",["paypal.com"],["paypal"]],
+["Amazon",["amazon.es","amazon.com","amzn.eu"],["amazon"]],
+["Netflix",["netflix.com"],["netflix"]],
+["Movistar",["movistar.es","telefonica.com"],["movistar"]],
+["Vodafone",["vodafone.es","vodafone.com"],["vodafone"]],
+["Orange",["orange.es"],["orange"]],
+["Apple",["apple.com","icloud.com"],["apple","icloud"]],
+["Microsoft",["microsoft.com","live.com","office.com"],["microsoft"]],
+["Google",["google.com","google.es"],["google"]],
+["Bizum",["bizum.es"],["bizum"]],
+["Mapfre",["mapfre.es","mapfre.com"],["mapfre"]],
+["DHL",["dhl.com","dhl.es"],["dhl"]],
+["SEUR",["seur.com"],["seur"]],
+["WhatsApp",["whatsapp.com"],["whatsapp"]],
+["una universidad",["uned.es","ucm.es","uam.es","upm.es","uc3m.es","us.es","ugr.es","uv.es","ub.edu","upc.edu","uoc.edu"],[]]
+];
+var GENERIC_OFFICIAL=[".gob.es",".gov",".edu"];
+var OPEN_PLATFORMS=["docs.google.com","drive.google.com","sites.google.com","forms.gle","forms.office.com","github.io","blogspot.com","wixsite.com","weebly.com","netlify.app","vercel.app","pages.dev","firebaseapp.com","web.app","notion.site","linktr.ee"];
+var SHORT=["bit.ly","tinyurl.com","cutt.ly","is.gd","shorturl.at","rb.gy","ow.ly","goo.gl","t.co","tiny.cc","s.id","t.ly"];
+var BADTLD=["xyz","top","click","icu","live","shop","work","zip","cc","buzz","cfd","sbs","rest","monster","cyou","gq","tk","ml","ga","cf"];
+var FILEEXT=["jpg","jpeg","png","gif","pdf","doc","docx","xls","xlsx","txt","mp3","mp4","zip","rar","html","htm","js","css"];
+function hostIn(h,d){return h===d||h.slice(-(d.length+1))==="."+d;}
+function officialLabel(h){
+ if(OPEN_PLATFORMS.some(function(d){return hostIn(h,d);}))return null;
+ for(var i=0;i<OFFICIAL.length;i++){for(var j=0;j<OFFICIAL[i][1].length;j++){if(hostIn(h,OFFICIAL[i][1][j]))return OFFICIAL[i][0];}}
+ for(var k=0;k<GENERIC_OFFICIAL.length;k++){if(h.slice(-GENERIC_OFFICIAL[k].length)===GENERIC_OFFICIAL[k])return "una entidad oficial";}
+ return null;
+}
+function extractHosts(t){
+ var re=/(?:https?:\/\/)?(?:[a-z0-9-]+\.)+[a-z]{2,24}(?::\d+)?(?:\/[^\s]*)?/gi,m,out=[];
+ while((m=re.exec(t))){
+  var prev=t.charAt(m.index-1);if(prev==="@"||prev===".")continue;
+  var raw=m[0].replace(/[.,;:!?)\]"']+$/,"");
+  var host;try{host=new URL(/^https?:\/\//i.test(raw)?raw:"https://"+raw).hostname.toLowerCase();}catch(e){continue;}
+  host=host.replace(/^www\./,"");
+  var tld=host.split(".").pop();
+  if(FILEEXT.indexOf(tld)>-1)continue;
+  out.push({host:host,http:/^http:\/\//i.test(raw),raw:raw});
+ }
+ return out;
+}
+function analyze(text){
+ var t=text.toLowerCase(),score=0,reasons=[],good=[],hosts=extractHosts(text),allOff=hosts.length>0,lookalike=false,seen={};
+ function add(p,r){score+=p;reasons.push(r);}
+ hosts.forEach(function(h){
+  if(seen[h.host])return;seen[h.host]=1;
+  var lab=officialLabel(h.host);
+  if(lab){good.push("El enlace es de "+h.host+", sitio oficial de "+lab+".");}
+  else{
+   allOff=false;
+   if(OPEN_PLATFORMS.some(function(d){return hostIn(h.host,d);}))add(2,"El enlace está en una plataforma abierta ("+h.host+"), donde cualquiera puede publicar.");
+   else reasons.push("No reconocemos el dominio "+h.host+".");
+   if(SHORT.indexOf(h.host)>-1)add(2,"Es un enlace acortado: no se ve a dónde lleva.");
+   var tld=h.host.split(".").pop();
+   if(BADTLD.indexOf(tld)>-1)add(2,"La terminación ."+tld+" se usa mucho en webs fraudulentas.");
+   if(/^\d+\.\d+\.\d+\.\d+$/.test(h.host))add(3,"El enlace usa una dirección numérica en vez de un nombre de web.");
+   if(h.host.indexOf("xn--")>-1)add(3,"El dominio usa caracteres que imitan a otros.");
+   if((h.host.match(/-/g)||[]).length>=3)add(1,"El dominio tiene muchos guiones, típico de webs falsas.");
+   if(h.http)add(1,"El enlace no usa conexión segura (https).");
+   if(!OPEN_PLATFORMS.some(function(d){return hostIn(h.host,d);}))OFFICIAL.forEach(function(b){
+    b[2].forEach(function(k){
+     var compact=h.host.replace(/-/g,"");
+     if(compact.indexOf(k.replace(/[ -]/g,""))>-1&&!lookalike){lookalike=true;add(4,"El enlace imita el nombre de "+b[0]+" pero no es su web oficial.");}
+    });
+   });
+  }
+ });
+ if(hosts.length){
+  OFFICIAL.forEach(function(b){
+   var tn=t;hosts.forEach(function(h){tn=tn.split(h.raw.toLowerCase()).join(" ");});
+   var named=b[2].some(function(k){return tn.indexOf(k)>-1;});
+   if(named&&!lookalike){
+    var bad=hosts.some(function(h){var l=officialLabel(h.host);return l!==b[0];});
+    var any=hosts.some(function(h){return officialLabel(h.host)===b[0];});
+    if(bad&&!any)add(3,"Dice ser de "+b[0]+" pero el enlace no es de su web oficial.");
+   }
+  });
+ }
+ if(/urgente|inmediat|[úu]ltimas horas|24 horas|48 horas|hoy mismo|[úu]ltimo aviso|bloquead|suspendid|caduca|cancelad/.test(t))add(2,"Mete prisa o amenaza con bloquear algo.");
+ if(/\bpag(a|ar|o)\b|abon(a|ar)|transferencia|ingres(a|ar)|bizum|tarjeta|gastos de env|\btasa\b|\bmulta\b|reembolso|devoluci|dinero|pr[ée]st(a|e)me|necesito que me (env|mand|hag)/.test(t))add(2,"Pide dinero o un pago.");
+ if(/contrase[ñn]a|\bclave\b|\bpin\b|c[óo]digo|\bcvv\b|\biban\b|\bdni\b|verificar (tu|su) cuenta|datos bancarios|datos personales/.test(t))add(2,"Pide claves, códigos o datos personales.");
+ if(/\b(mam[aá]|pap[aá]|hij[oa]|abuel[oa]|t[ií][oa])\b/.test(t)&&/cambiado de n[úu]mero|nuevo n[úu]mero|n[úu]mero nuevo|m[óo]vil (roto|nuevo)|se me (ha )?rompi[óo]/.test(t))add(3,"Parece el engaño de “soy tu hijo/a y tengo un número nuevo”.");
+ if(/has ganado|premio|sorteo|herencia|ganador/.test(t))add(2,"Habla de premios o herencias inesperadas.");
+ if(/paquete|env[ií]o|entrega/.test(t)&&hosts.length)score+=1;
+ var level;
+ if(lookalike||score>=5)level="red";
+ else if(hosts.length&&allOff&&score<=1)level="green";
+ else if(!hosts.length&&score===0)level="green";
+ else level="yellow";
+ if(level==="green"&&!good.length)good.push("No vemos señales de alerta en el texto.");
+ return {level:level,score:score,reasons:level==="green"?good:reasons,good:good};
+}
+var $=function(i){return document.getElementById(i);};
+var TXT={green:["No vemos señales de alerta","Si no esperabas este mensaje, confírmalo con quien te lo envía por otro canal antes de dar datos o dinero."],
+yellow:["Ojo: verifícalo antes de actuar","No pulses nada todavía. Confirma por otro canal: llama tú al número que tienes guardado o entra escribiendo la web oficial."],
+red:["Peligro: no lo abras","No pulses el enlace, no respondas y no des datos ni dinero. Si ya lo hiciste, llama a tu banco y bloquea las tarjetas."]};
+$("go").onclick=function(){
+ var v=$("txt").value.trim();
+ if(!v){alert("Pega primero un mensaje o un enlace.");return;}
+ var r=analyze(v),res=$("res");
+ res.className=r.level;res.style.display="block";
+ $("rt").textContent=TXT[r.level][0];$("rs").textContent="";
+ var ul=$("rl");ul.innerHTML="";
+ r.reasons.forEach(function(x){var li=document.createElement("li");li.textContent=x;ul.appendChild(li);});
+ $("ra").textContent=TXT[r.level][1];
+ $("fb").innerHTML=FBHTML;bindFb();
+ res.scrollIntoView({behavior:"smooth",block:"start"});
+ gtag("event","analizar",{nivel:r.level});
+};
+$("clr").onclick=function(){$("txt").value="";$("res").style.display="none";};
+document.querySelectorAll("[data-ex]").forEach(function(b){b.onclick=function(){$("txt").value=b.getAttribute("data-ex");$("go").click();};});
+var FBHTML=$("fb").innerHTML;
+function bindFb(){document.querySelectorAll("[data-f]").forEach(function(b){b.onclick=function(){gtag("event","feedback",{tipo:b.getAttribute("data-f")});$("fb").innerHTML="<p>Gracias, nos ayuda a mejorar.</p>";};});}
+bindFb();
+$("share").onclick=function(){
+ var msg="Comprueba mensajes y enlaces sospechosos antes de abrirlos: https://escudoiapp.com/comprobador.html";
+ gtag("event","compartir");
+ if(navigator.share){navigator.share({text:msg}).catch(function(){});}
+ else{window.open("https://wa.me/?text="+encodeURIComponent(msg),"_blank");}
+};
+</script>
+</body>
+</html>
